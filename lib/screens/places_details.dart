@@ -9,13 +9,14 @@ class PlacesDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(place.title)),
-      body: Center(
-        child: Text(
-          place.title,
-          style: Theme.of(context).textTheme.bodyLarge!.merge(
-            TextStyle(color: Theme.of(context).colorScheme.primary),
+      body: Stack(
+        children: [
+          Image.file(
+            place.image,
+            width: double.infinity,
+            height: double.infinity,
           ),
-        ),
+        ],
       ),
     );
   }
