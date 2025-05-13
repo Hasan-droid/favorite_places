@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:favorite_places/main.dart';
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/providers/user_places.dart';
@@ -14,11 +16,14 @@ class NewPlace extends ConsumerStatefulWidget {
 
 class _NewPlaceState extends ConsumerState<NewPlace> {
   final _inputTextController = TextEditingController();
+  File? _image;
 
   void savePlace() {
     if (_inputTextController.text.isEmpty) return;
 
-    ref.read(UserPlacesProvider.notifier).addPlace(_inputTextController.text);
+    ref
+        .read(UserPlacesProvider.notifier)
+        .addPlace(_inputTextController.text, _image!);
 
     Navigator.of(context).pop();
   }
@@ -39,7 +44,11 @@ class _NewPlaceState extends ConsumerState<NewPlace> {
               ),
             ),
             SizedBox(height: 12),
-            InputImage(),
+            InputImage(
+              onSelectedImage: (image) {
+                _image = image;
+              },
+            ),
             ElevatedButton.icon(
               onPressed: savePlace,
               icon: Icon(Icons.add),

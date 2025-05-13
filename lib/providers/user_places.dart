@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:favorite_places/models/place.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -9,8 +11,8 @@ class UserPlacesNotifier extends StateNotifier<List<Place>> {
   //const for mutation
   UserPlacesNotifier() : super(const []);
 
-  void addPlace(String title) {
-    Place newPlace = Place(title);
+  void addPlace(String title, File image) {
+    Place newPlace = Place(title, image);
 
     //state enhirted from StateNotifier
     //mutation is a must , this way i create new copy of list and manipulated it
