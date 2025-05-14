@@ -17,14 +17,18 @@ class NewPlace extends ConsumerStatefulWidget {
 
 class _NewPlaceState extends ConsumerState<NewPlace> {
   final _inputTextController = TextEditingController();
+  PlaceLocation? _placeLocation;
   File? _image;
 
   void savePlace() {
-    if (_inputTextController.text.isEmpty) return;
+    if (_inputTextController.text.isEmpty ||
+        _image == null ||
+        _placeLocation == null)
+      return;
 
     ref
         .read(UserPlacesProvider.notifier)
-        .addPlace(_inputTextController.text, _image!);
+        .addPlace(_inputTextController.text, _image!, _placeLocation!);
 
     Navigator.of(context).pop();
   }
@@ -51,7 +55,11 @@ class _NewPlaceState extends ConsumerState<NewPlace> {
               },
             ),
             SizedBox(height: 12),
-            InputLocation(onSelectLocation: (location) {}),
+            InputLocation(
+              onSelectLocation: (location) {
+                _placeLocation = location;
+              },
+            ),
             SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: savePlace,

@@ -13,6 +13,6 @@ class Place {
   final String title;
   final String id;
   final File image;
-  // final PlaceLocation location;
-  Place(this.title, this.image) : id = const Uuid().v4();
+  final PlaceLocation location;
+  Place(this.title, this.image, this.location) : id = const Uuid().v4();
 }
