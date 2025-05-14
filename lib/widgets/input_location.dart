@@ -16,7 +16,7 @@ class _InputLocationState extends State<InputLocation> {
 
   String get LocationImage {
     if (_pickedLocation == null) {
-      return '';
+      return 'No location was obtained';
     }
 
     final lat = _pickedLocation!.latitude;
