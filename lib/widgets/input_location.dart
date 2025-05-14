@@ -1,15 +1,31 @@
+import 'package:favorite_places/models/place.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
-class LocationInput extends StatefulWidget {
-  const LocationInput({super.key});
+class InputLocation extends StatefulWidget {
+  final void Function(PlaceLocation pickedLocation) onSelectLocation;
+  const InputLocation({super.key, required this.onSelectLocation});
 
   @override
-  State<LocationInput> createState() => _LocationInputState();
+  State<InputLocation> createState() => _InputLocationState();
 }
 
-class _LocationInputState extends State<LocationInput> {
+class _InputLocationState extends State<InputLocation> {
   bool isGetLocation = false;
+  PlaceLocation? _pickedLocation;
+
+  String get LocationImage {
+    if (_pickedLocation == null) {
+      return '';
+    }
+
+    final lat = _pickedLocation!.latitude;
+    final long = _pickedLocation!.latitude;
+
+    //here i should return a string from google maps apis
+    return "https://static.wikia.nocookie.net/marvelcrossroads/images/2/29/Man-of-steel-logo.png/revision/latest?cb=20160417001211";
+  }
+
   setLocation() async {
     Location location = Location();
 
@@ -37,9 +53,18 @@ class _LocationInputState extends State<LocationInput> {
     });
     locationData = await location.getLocation();
 
+    if (locationData.latitude == null || locationData.longitude == null) return;
+
     setState(() {
+      _pickedLocation = PlaceLocation(
+        locationData.longitude!,
+        locationData.latitude!,
+        "address in null because i don't care about google apis",
+      );
       isGetLocation = false;
     });
+
+    widget.onSelectLocation(_pickedLocation!);
   }
 
   @override
@@ -50,6 +75,10 @@ class _LocationInputState extends State<LocationInput> {
         color: Theme.of(context).colorScheme.onBackground,
       ),
     );
+
+    if (_pickedLocation != null) {
+      previewLocation = Image.network(LocationImage);
+    }
     if (isGetLocation) {
       previewLocation = Center(child: CircularProgressIndicator());
     }

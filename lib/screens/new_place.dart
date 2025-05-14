@@ -4,7 +4,7 @@ import 'package:favorite_places/main.dart';
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/providers/user_places.dart';
 import 'package:favorite_places/widgets/input_image.dart';
-import 'package:favorite_places/widgets/location_input.dart';
+import 'package:favorite_places/widgets/input_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,7 +51,7 @@ class _NewPlaceState extends ConsumerState<NewPlace> {
               },
             ),
             SizedBox(height: 12),
-            LocationInput(),
+            InputLocation(onSelectLocation: (location) {}),
             SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: savePlace,
