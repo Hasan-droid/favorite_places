@@ -8,6 +8,22 @@ import 'package:sqflite/sqlite_api.dart';
 
 import 'package:favorite_places/models/place.dart';
 
+Future<Database> _loadDataBase() async {
+  final dbPath = await sql.getDatabasesPath();
+
+  final db = await sql.openDatabase(
+    path.join(dbPath, "places.db"),
+    onCreate: (db, version) {
+      return db.execute(
+        "CREATE TABLE user_places (id TEXT PRIMARY KEY,title TEXT NOT NULL,image TEXT NOT NULL,latitude REAL NOT NULL,longitude REAL NOT NULL, address TEXT NOT NULL);",
+      );
+    },
+    version: 1,
+  );
+
+  return db;
+}
+
 //create class that has methods to manipulate users data
 //List<Place> data to be manipulated
 class UserPlacesNotifier extends StateNotifier<List<Place>> {
@@ -15,6 +31,27 @@ class UserPlacesNotifier extends StateNotifier<List<Place>> {
   //const [] is the initial state
   //const for mutation
   UserPlacesNotifier() : super(const []);
+
+  void loadPlaces() async {
+    //load data base
+    final db = await _loadDataBase();
+
+    //query table
+    final data = await db.query("user_places");
+
+    //map objects
+    final places = data.map(
+      (row) => Place(
+        row["title"] as String,
+        File(row["image"] as String),
+        PlaceLocation(
+          row["longitude"] as double,
+          row["latitude"] as double,
+          row["address"] as String,
+        ),
+      ),
+    );
+  }
 
   void addPlace(String title, File image, PlaceLocation pickedLocation) async {
     //the path in device the app want to store in it
@@ -30,17 +67,7 @@ class UserPlacesNotifier extends StateNotifier<List<Place>> {
 
     Place newPlace = Place(title, image, pickedLocation);
 
-    final dbPath = await sql.getDatabasesPath();
-
-    final db = await sql.openDatabase(
-      path.join(dbPath, "places.db"),
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE user_places (id TEXT PRIMARY KEY,title TEXT NOT NULL,image TEXT NOT NULL,latitude REAL NOT NULL,longitude REAL NOT NULL, address TEXT NOT NULL);",
-        );
-      },
-      version: 1,
-    );
+    final db = await _loadDataBase();
 
     db.insert("user_places", {
       'id': newPlace.id, // Assuming Place has an id field
