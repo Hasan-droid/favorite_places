@@ -32,7 +32,7 @@ class UserPlacesNotifier extends StateNotifier<List<Place>> {
   //const for mutation
   UserPlacesNotifier() : super(const []);
 
-  void loadPlaces() async {
+  Future<void> loadPlaces() async {
     //load data base
     final db = await _loadDataBase();
 
@@ -40,17 +40,23 @@ class UserPlacesNotifier extends StateNotifier<List<Place>> {
     final data = await db.query("user_places");
 
     //map objects
-    final places = data.map(
-      (row) => Place(
-        row["title"] as String,
-        File(row["image"] as String),
-        PlaceLocation(
-          row["longitude"] as double,
-          row["latitude"] as double,
-          row["address"] as String,
-        ),
-      ),
-    );
+    final places =
+        data
+            .map(
+              (row) => Place(
+                row["title"] as String,
+                File(row["image"] as String),
+                PlaceLocation(
+                  row["longitude"] as double,
+                  row["latitude"] as double,
+                  row["address"] as String,
+                ),
+              ),
+            )
+            .toList()
+            .reversed
+            .toList();
+    state = places;
   }
 
   void addPlace(String title, File image, PlaceLocation pickedLocation) async {
